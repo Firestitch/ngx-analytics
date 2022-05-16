@@ -1,6 +1,5 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { Angulartics2Module } from 'angulartics2';
 import { FsAnalyticsDirective } from './components/analytics';
 
 import { FS_ANALYTICS_CONFIG } from './injectors';
@@ -9,9 +8,6 @@ import { FsAnalytics } from './services/analytics.service';
 
 
 @NgModule({
-  imports: [
-    Angulartics2Module.forRoot(),
-  ],
   declarations: [
     FsAnalyticsDirective,
   ],

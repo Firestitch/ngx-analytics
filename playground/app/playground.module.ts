@@ -32,7 +32,7 @@ const routes: Routes = [
     BrowserModule,
     FsAnalyticsModule.forRoot({
       googleAnalytics: {
-        trackingId: 'G-BW04NF6H7W',
+        measurementId: 'G-BW04NF6H7W',
       }
     }),
     BrowserAnimationsModule,

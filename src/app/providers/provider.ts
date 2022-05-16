@@ -6,6 +6,7 @@ import { FsAnalyticsConfig } from "@firestitch/analytics";
 export abstract class Provider {
 
   public abstract init(): void;
+  public abstract trackEvent(action, value?, catgegory?, label?): void;
 
   public constructor(
     protected _injector: Injector,
