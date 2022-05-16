@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { FsExampleModule } from '@firestitch/example';
 import { FsMessageModule } from '@firestitch/message';
-import { FsAnalyticsModule } from '@firestitch/analytics';
+import { FsAnalyticsModule, FS_ANALYTICS_CONFIG } from '@firestitch/analytics';
 import { FsLabelModule } from '@firestitch/label';
 import { FsStoreModule } from '@firestitch/store';
 
@@ -17,6 +17,7 @@ import {
   ExamplesComponent, KitchenSinkComponent
 } from './components';
 import { AppComponent } from './app.component';
+import { appAnalyticsConfig } from './app-analytics-config';
 
 
 const routes: Routes = [
@@ -50,6 +51,12 @@ const routes: Routes = [
     KitchenSinkComponent,
     ExamplesComponent,
   ],
+  providers: [
+    {
+      provide: FS_ANALYTICS_CONFIG,
+      useFactory: appAnalyticsConfig,
+    },
+  ]
 })
 export class PlaygroundModule {
 }

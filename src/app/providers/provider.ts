@@ -1,6 +1,7 @@
 import { Injector } from "@angular/core";
 import { Router } from "@angular/router";
-import { FsAnalyticsConfig } from "@firestitch/analytics";
+
+import { FsAnalyticsConfig } from "../interfaces/analytics-config";
 
 
 export abstract class Provider {
@@ -12,11 +13,6 @@ export abstract class Provider {
     protected _injector: Injector,
     protected _config: FsAnalyticsConfig,
     protected _router: Router,
-
-    // constructor(angulartics2GoogleAnalytics: Angulartics2GoogleAnalytics) {
-    //   angulartics2GoogleAnalytics.startTracking();
-    // }
-
   ) {}
 
   public get window() {

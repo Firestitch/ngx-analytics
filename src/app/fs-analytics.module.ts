@@ -1,6 +1,6 @@
 import { NgModule, ModuleWithProviders } from '@angular/core';
 
-import { FsAnalyticsDirective } from './components/analytics';
+import { FsAnalyticsDirective } from './directives/analytics';
 
 import { FS_ANALYTICS_CONFIG } from './injectors';
 import { FsAnalyticsConfig } from './interfaces';
@@ -19,18 +19,6 @@ export class FsAnalyticsModule {
   static forRoot(config: FsAnalyticsConfig = {}): ModuleWithProviders<FsAnalyticsModule> {
     return {
       ngModule: FsAnalyticsModule,
-      providers: [
-        {
-          provide: FS_ANALYTICS_CONFIG,
-          useValue: config,
-        }
-      ],
     };
-  }
-
-  constructor(
-    private _analytics: FsAnalytics,
-  ) {
-    _analytics.init();
   }
 }
