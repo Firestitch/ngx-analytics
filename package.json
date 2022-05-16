@@ -56,7 +56,6 @@
     "@firestitch/label": "^12.0.0",
     "@firestitch/menu": "^12.0.0",
     "@firestitch/message": "^12.1.0",
-    "@firestitch/html-editor": "^12.0.1",
     "@firestitch/phone": "^12.0.0",
     "@firestitch/prompt": "^12.0.1",
     "@firestitch/scroll": "^12.0.2",
