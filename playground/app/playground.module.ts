@@ -6,7 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { FsExampleModule } from '@firestitch/example';
 import { FsMessageModule } from '@firestitch/message';
-import { FsContentWidgetsModule, FsContentWidgetModule } from '@firestitch/content-widget';
+import { FsAnalyticsModule } from '@firestitch/analytics';
 import { FsLabelModule } from '@firestitch/label';
 import { FsStoreModule } from '@firestitch/store';
 import { FsHtmlEditorModule } from '@firestitch/html-editor';
@@ -15,25 +15,27 @@ import { ToastrModule } from 'ngx-toastr';
 
 import { AppMaterialModule } from './material.module';
 import {
-  ExamplesComponent
+  ExamplesComponent, KitchenSinkComponent
 } from './components';
 import { AppComponent } from './app.component';
-import { ContentWidgetsComponent } from './components/content-widgets';
-import { FS_CONTENT_WIDGET_CONFIG } from 'src/app/content-widget/injectors';
-import { contentWidgetConfigFactory } from './helpers/content-widget-config-factory';
-import { ContentWidgetComponent } from './components/content-widget';
 
 
 const routes: Routes = [
   { path: '', component: ExamplesComponent },
+  { path: 'contact', component: ExamplesComponent },
+  { path: 'about', component: ExamplesComponent },
 ];
 
 @NgModule({
   bootstrap: [ AppComponent ],
   imports: [
+    RouterModule,
     BrowserModule,
-    FsContentWidgetsModule,
-    FsContentWidgetModule,
+    FsAnalyticsModule.forRoot({
+      googleAnalytics: {
+        trackingId: 'G-BW04NF6H7W',
+      }
+    }),
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,
@@ -45,17 +47,10 @@ const routes: Routes = [
     ToastrModule.forRoot({ preventDuplicates: true }),
     RouterModule.forRoot(routes),
   ],
-  providers: [
-    { provide: FS_CONTENT_WIDGET_CONFIG, 
-      useFactory: contentWidgetConfigFactory, 
-      deps: [ ] 
-    },
-  ],
   declarations: [
     AppComponent,
+    KitchenSinkComponent,
     ExamplesComponent,
-    ContentWidgetsComponent,
-    ContentWidgetComponent,
   ],
 })
 export class PlaygroundModule {
