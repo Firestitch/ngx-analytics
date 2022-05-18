@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FsAnalytics } from '@firestitch/analytics';
 
 
 @Component({
@@ -8,8 +9,8 @@ import { Component } from '@angular/core';
 export class AppComponent {
 
   public constructor(
-    
+    private _analytics: FsAnalytics,
   ) {
-
+    _analytics.init();
   }
 }

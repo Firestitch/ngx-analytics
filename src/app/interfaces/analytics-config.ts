@@ -1,5 +1,8 @@
 export interface FsAnalyticsConfig {
   googleAnalytics?: {
-    measurementId?: string,
+    measurementId: string,
+  },
+  facebookPixel?: {
+    pixelId: string,
   }
 }

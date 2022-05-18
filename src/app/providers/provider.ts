@@ -19,7 +19,21 @@ export abstract class Provider {
     return (window as any);
   }
 
-  public getAngulartics2Provider() {
-    
+  public addScript(src, onload = null) {
+    var script = document.createElement('script');    
+    script.src = src;
+    script.setAttribute('async','');
+
+    if(onload) {
+      script.onload = () => {
+        onload();
+      };
+    }
+
+    this.appendHead(script);
+  }
+
+  public appendHead(el) {
+    document.getElementsByTagName('head')[0].appendChild(el);
   }
 }

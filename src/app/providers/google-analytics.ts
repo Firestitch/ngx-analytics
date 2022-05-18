@@ -10,11 +10,8 @@ export class GoogleAnalyticsProvider extends Provider {
 
   public init() {
     if(this.trackingId) {
-      var script = document.createElement('script');    
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${this.trackingId}`;
-      script.setAttribute('async','');
-      document.getElementsByTagName('head')[0].appendChild(script);
-
+      this.addScript(`https://www.googletagmanager.com/gtag/js?id=${this.trackingId}`);
+   
       this.window.dataLayer = this.window.dataLayer || [];
       this.window.gtag = function () {
         (window as any).dataLayer.push(arguments); 
