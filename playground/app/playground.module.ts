@@ -31,11 +31,7 @@ const routes: Routes = [
   imports: [
     RouterModule,
     BrowserModule,
-    FsAnalyticsModule.forRoot({
-      googleAnalytics: {
-        measurementId: 'G-BW04NF6H7W',
-      }
-    }),
+    FsAnalyticsModule,
     BrowserAnimationsModule,
     AppMaterialModule,
     FormsModule,

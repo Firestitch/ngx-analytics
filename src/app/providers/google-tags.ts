@@ -6,19 +6,27 @@ import { NavigationEnd } from "@angular/router";
 declare let gtag: Function;
 
 
-export class GoogleAnalyticsProvider extends Provider {
+export class GoogleTagsProvider extends Provider {
 
   public init() {
-    if(this.measurementId) {
-      this.addScript(`https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`);
+    if(this.containerId) {
+      this.addScript(`https://www.googletagmanager.com/gtm.js?id=${this.containerId}`);
 
       this.window.dataLayer = this.window.dataLayer || [];
-      this.window.gtag = function () {
+      this.window.gtag = function (event, action, options) {
+        if(event==='event') {
+        const payload = {
+          'event': action,
+          ...options
+        };
+        (window as any).dataLayer.push(payload);
+      } else {
         (window as any).dataLayer.push(arguments);
+      }
       }
 
       gtag('js', new Date());
-      gtag('config', this.measurementId, { path_path: this._router.url });
+      gtag('config', this.containerId, { path_path: this._router.url });
 
       this._router.events.pipe(
         skip(1),
@@ -27,7 +35,7 @@ export class GoogleAnalyticsProvider extends Provider {
       .subscribe((event: NavigationEnd) => {
         gtag('event', 'page_view', {
           page_path: event.urlAfterRedirects,
-          send_to: this.measurementId
+          send_to: this.containerId
         })
       });
     }
@@ -45,7 +53,7 @@ export class GoogleAnalyticsProvider extends Provider {
     });
   }
 
-  public get measurementId() {
-    return this._config.googleAnalytics?.measurementId;
+  public get containerId() {
+    return this._config.googleTags?.containerId;
   }
 }

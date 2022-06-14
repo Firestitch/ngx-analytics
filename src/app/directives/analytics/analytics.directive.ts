@@ -15,7 +15,7 @@ export class FsAnalyticsDirective implements OnInit, OnDestroy {
   @Input() public event = 'click';
 
   private _destroy$ = new Subject();
-  
+
   public constructor(
     private _analytics: FsAnalytics,
     private _el: ElementRef,
