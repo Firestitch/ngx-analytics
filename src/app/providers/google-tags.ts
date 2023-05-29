@@ -49,6 +49,10 @@ export class GoogleTagsProvider extends Provider {
     });
   }
 
+  public setUser(data) {
+
+  }
+
   public get containerId() {
     return this._config.googleTags?.containerId;
   }

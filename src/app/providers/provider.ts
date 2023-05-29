@@ -10,6 +10,13 @@ export abstract class Provider {
   public abstract init(): void;
   public abstract trackEvent(action, value?, catgegory?, label?): void;
   public abstract trackPage(path): void;
+  public abstract setUser(data: {
+    name?: string,
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    id?: string,
+  }): void;
 
   public constructor(
     protected _injector: Injector,

@@ -47,4 +47,10 @@ export class FsAnalytics {
       provider.trackEvent(action, data);
     });
   }
+
+  public setUser(data) {
+    this._providers.forEach((provider) => {
+      provider.setUser(data);
+    });
+  }
 }

@@ -2,9 +2,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 
 import { FsAnalyticsDirective } from './directives/analytics';
 
-import { FS_ANALYTICS_CONFIG } from './injectors';
 import { FsAnalyticsConfig } from './interfaces';
-import { FsAnalytics } from './services/analytics.service';
 
 
 @NgModule({

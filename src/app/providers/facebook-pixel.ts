@@ -50,6 +50,10 @@ export class FacebookPixelProvider extends Provider {
     this.trackEvent('PageView', { path });
   }
 
+  public setUser(data) {
+
+  }
+
   public addImg(): void {
     var img = document.createElement('img');
     img.setAttribute('height','1');

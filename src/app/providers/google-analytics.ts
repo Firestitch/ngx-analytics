@@ -30,6 +30,10 @@ export class GoogleAnalyticsProvider extends Provider {
     this.window.gtag(name, value, options);
   }
 
+  public setUser(data) {
+
+  }
+
   public trackEvent(action: any, value?, options?): void {
     this.gtag('event', action, {
       'event_category': options?.category,
