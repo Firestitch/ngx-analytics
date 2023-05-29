@@ -9,8 +9,8 @@ export function appAnalyticsConfig(): FsAnalyticsConfig {
     googleTags: {
       containerId: 'GTM-KKTK9W4',
     },
-    // facebookPixel: {
-    //   pixelId: '312316924264208',
-    // }
+    klaviyo: {
+      publicApiKey: '',
+    }
   };
 }

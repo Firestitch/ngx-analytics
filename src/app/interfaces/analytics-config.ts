@@ -7,5 +7,8 @@ export interface FsAnalyticsConfig {
   },
   facebookPixel?: {
     pixelId: string,
+  },
+  klaviyo?: {
+    publicApiKey: string,
   }
 }

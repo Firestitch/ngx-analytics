@@ -27,18 +27,14 @@ export class GoogleTagsProvider extends Provider {
 
       gtag('js', new Date());
       gtag('config', this.containerId, { path_path: this._router.url });
-
-      this._router.events.pipe(
-        skip(1),
-        filter(event => event instanceof NavigationEnd)
-      )
-      .subscribe((event: NavigationEnd) => {
-        gtag('event', 'page_view', {
-          page_path: event.urlAfterRedirects,
-          send_to: this.containerId
-        })
-      });
     }
+  }
+
+  public trackPage(path: string): void {
+    gtag('event', 'page_view', {
+      page_path: path,
+      send_to: this.containerId
+    });
   }
 
   public gtag(name, value, options = {}) {

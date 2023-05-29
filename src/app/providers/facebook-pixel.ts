@@ -20,7 +20,7 @@ export class FacebookPixelProvider extends Provider {
     });
   }
 
-  public addScript(): void {
+  public addScript(): Promise<void> {
     const f = window as any;
     const n: any = f.fbq = function () {
       n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments);
@@ -35,19 +35,19 @@ export class FacebookPixelProvider extends Provider {
     n.version = '2.0';
     n.queue = [];
 
-    const onload = () => {
-      fbq('init', this.pixelId);
-      this.trackEvent('PageView');
-
-      this._router.events.pipe(
-        filter(event => event instanceof NavigationEnd)
-      )
-      .subscribe((event: NavigationEnd) => {
-        this.trackEvent('PageView');
-      });
-    };
-
-    super.addScript(`https://connect.facebook.net/en_US/fbevents.js`, onload);
+    return new Promise((resolve, error) => {
+      super.addScript(`https://connect.facebook.net/en_US/fbevents.js`)
+        .then(() => {
+          fbq('init', this.pixelId);
+          this.trackEvent('PageView');
+          resolve();
+        })
+        .catch(error);
+    });
+  }
+  
+  public trackPage(path: string): void {
+    this.trackEvent('PageView', { path });
   }
 
   public addImg(): void {
