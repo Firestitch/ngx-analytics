@@ -47,7 +47,7 @@
     "@firestitch/chip": "^12.0.0",
     "@firestitch/clear": "^12.0.0",
     "@firestitch/common": "^12.0.0",
-    "@firestitch/component-tools": "^12.0.11",
+    "@firestitch/component-tools": "^12.0.17",
     "@firestitch/core": "^12.0.1",
     "@firestitch/date": "^12.0.0",
     "@firestitch/datepicker": "^12.1.2",
