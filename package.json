@@ -75,7 +75,7 @@
     "@firestitch/store": "^12.0.0",
     "codelyzer": "^6.0.0",
     "cpx": "^1.5.0",
-    "cypress": "8.0.0",
+    "cypress": "13.2.0",
     "cypress-multi-reporters": "^1.5.0",
     "date-fns": "^2.8.1",
     "date-fns-tz": "^1.2.2",
