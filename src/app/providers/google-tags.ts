@@ -1,59 +1,68 @@
 import { Provider } from "./provider";
 
-import { filter, skip } from 'rxjs/operators';
-import { NavigationEnd } from "@angular/router";
-
-declare let gtag: Function;
+import { EventType } from "../enums";
+import { PurchaseEvent } from "../interfaces";
 
 
 export class GoogleTagsProvider extends Provider {
 
   public init() {
-    if(this.containerId) {
+    if (this.containerId) {
       this.addScript(`https://www.googletagmanager.com/gtm.js?id=${this.containerId}`);
-
       this.window.dataLayer = this.window.dataLayer || [];
-      this.window.gtag = function (event, action, options) {
-        if(event==='event') {
-        const payload = {
-          'event': action,
-          ...options
-        };
-        (window as any).dataLayer.push(payload);
-      } else {
-        (window as any).dataLayer.push(arguments);
-      }
-      }
 
-      gtag('js', new Date());
-      gtag('config', this.containerId, { path_path: this._router.url });
+      this.pushData('js', new Date());
+      this.pushData('config', this.containerId, { path_path: this._router.url });
     }
   }
 
+  public pushData(...data: any): void {
+    this.window.dataLayer.push(data);
+  }
+
   public trackPage(path: string): void {
-    gtag('event', 'page_view', {
-      page_path: path,
-      send_to: this.containerId
+    this.trackEvent('pageview', {
+      page: {
+        path,
+      }
     });
   }
 
-  public gtag(name, value, options = {}) {
-    this.window.gtag(name, value, options);
-  }
+  public trackEvent(type: any, value?, options?): void {
+    let data = {
+      value,
+      category: options?.category,
+      label: options?.label,
+    } as any;
 
-  public trackEvent(action: any, value?, options?): void {
-    this.gtag('event', action, {
-      'event_category': options?.category,
-      'event_label': options?.label,
-      'value': value
+    if (type === EventType.Purcahse) {
+      const purchaseEvent: PurchaseEvent = value;
+      data = {
+        ecommerce: {
+          transaction_id: purchaseEvent.transactionId,
+          value: purchaseEvent.total,
+          tax: purchaseEvent.tax,
+          shipping: purchaseEvent.shipping,
+          items: purchaseEvent.products
+            .map((product) => ({
+              item_id: product.id,
+              item_name: product.name,
+              price: product.price,
+              quantity: product.quantity,
+            })),
+        }
+      }
+    }
+
+    this.window.dataLayer.push({
+      event: type,
+      ...data
     });
   }
 
-  public setUser(data) {
-
-  }
+  public setUser(data) { }
 
   public get containerId() {
-    return this._config.googleTags?.containerId;
+    return this._config.providers.googleTags?.containerId;
   }
 }

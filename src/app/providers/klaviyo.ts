@@ -1,3 +1,4 @@
+import { PurchaseEvent } from "../interfaces";
 import { Provider } from "./provider";
 
 
@@ -6,7 +7,7 @@ export class KlaviyoProvider extends Provider {
   public init() {
     (window as any)._learnq = (window as any)._learnq || [];
 
-    if(this.publicApiKey) {
+    if (this.publicApiKey) {
       this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`);
     }
   }
@@ -15,22 +16,26 @@ export class KlaviyoProvider extends Provider {
     this.trackEvent('Page View', { path });
   }
 
-  public trackEvent(action: any, value?: any): void {
-    (window as any)._learnq.push(['track', action, value ]);
+  public purchase(data: PurchaseEvent): void {
+    this.trackEvent('Purchase', data);
   }
-  
+
+  public trackEvent(action: any, value?: any): void {
+    (window as any)._learnq.push(['track', action, value]);
+  }
+
   public setUser(data) {
     data = Object.keys(data)
       .reduce((accum, name) => {
-        switch(name) {
+        switch (name) {
           case 'email':
             accum['$email'] = data[name];
             break;
-            
+
           case 'firstName':
             accum['$first_name'] = data[name];
             break;
-            
+
           case 'lastName':
             accum['$last_name'] = data[name];
             break;
@@ -46,6 +51,6 @@ export class KlaviyoProvider extends Provider {
   }
 
   public get publicApiKey() {
-    return this._config.klaviyo?.publicApiKey;
+    return this._config.providers.klaviyo?.publicApiKey;
   }
 }

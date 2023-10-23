@@ -1,4 +1,4 @@
-import { NgModule, ModuleWithProviders } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 
 import { FsAnalyticsDirective } from './directives/analytics';
 
@@ -17,6 +17,11 @@ export class FsAnalyticsModule {
   static forRoot(config: FsAnalyticsConfig = {}): ModuleWithProviders<FsAnalyticsModule> {
     return {
       ngModule: FsAnalyticsModule,
+      // providers: [
+      //   {
+      //     useClass:
+      //   }
+      // ]
     };
   }
 }

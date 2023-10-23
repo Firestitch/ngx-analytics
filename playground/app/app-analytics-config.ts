@@ -1,16 +1,20 @@
 import { FsAnalyticsConfig } from '@firestitch/analytics';
+import { AnalyticsProcessorService } from './service/analytics-processor.service';
 
 
-export function appAnalyticsConfig(): FsAnalyticsConfig {
+export function appAnalyticsConfig(analyticsProcessorService: AnalyticsProcessorService): FsAnalyticsConfig {
   return {
-    // googleAnalytics: {
-    //   measurementId: 'G-BW04NF6H7W',
-    // },
-    googleTags: {
-      containerId: 'GTM-KKTK9W4',
+    providers: {
+      googleAnalytics: {
+        measurementId: 'G-BW04NF6H7W',
+      },
+      googleTags: {
+        containerId: 'GTM-PW823QMF',
+      },
+      // klaviyo: {
+      //   publicApiKey: '',
+      // }
     },
-    klaviyo: {
-      publicApiKey: '',
-    }
+    processor: analyticsProcessorService
   };
 }

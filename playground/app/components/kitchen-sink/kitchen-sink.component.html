@@ -1,5 +1,20 @@
-<a mat-raised-button fsAnalytics="button_click">Button Click</a>
-<a mat-raised-button (click)="manualEvent()">Manual Event</a>
+<a 
+    mat-raised-button 
+    [fsAnalytics]="'Custom Button Click'">
+  Custom Button Click
+</a>
+
+<a 
+    mat-raised-button 
+    (click)="manualEvent()">
+  Manual Event
+</a>
+
+<a 
+    mat-raised-button 
+    (click)="purchase()">
+  Purchase
+</a>
 
 <a
     [routerLink]="['/']"

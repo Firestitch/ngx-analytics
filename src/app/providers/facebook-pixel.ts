@@ -1,7 +1,7 @@
+import { EventType } from "../enums";
+import { PurchaseEvent } from "../interfaces";
 import { Provider } from "./provider";
 
-import { filter } from 'rxjs/operators';
-import { NavigationEnd } from "@angular/router";
 
 declare let fbq: Function;
 
@@ -13,21 +13,37 @@ export class FacebookPixelProvider extends Provider {
     this.addImg();
   }
 
-  public trackEvent(action: any, value?, options?): void {
-    fbq('track', action, {
+  public trackEvent(type: string | EventType, value?, options?): void {
+    let data = {
       ...options,
       value,
-    });
+    };
+
+    if (type === EventType.Purcahse) {
+      const prucahseEvent = value as PurchaseEvent;
+      type = 'Purchase';
+      data = {
+        currency: prucahseEvent.currency,
+        value: prucahseEvent.total,
+        contents: prucahseEvent.products
+          .map((product) => ({
+            id: product.id,
+            quantity: product.quantity || 1,
+          }))
+      };
+    }
+
+    fbq('track', type, data);
   }
 
   public addScript(): Promise<void> {
     const f = window as any;
     const n: any = f.fbq = function () {
-      n.callMethod ? n.callMethod.apply(n,arguments) : n.queue.push(arguments);
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
     };
 
-    if(!f._fbq) {
-      f._fbq=n;
+    if (!f._fbq) {
+      f._fbq = n;
     }
 
     n.push = n;
@@ -45,7 +61,7 @@ export class FacebookPixelProvider extends Provider {
         .catch(error);
     });
   }
-  
+
   public trackPage(path: string): void {
     this.trackEvent('PageView', { path });
   }
@@ -56,16 +72,16 @@ export class FacebookPixelProvider extends Provider {
 
   public addImg(): void {
     var img = document.createElement('img');
-    img.setAttribute('height','1');
-    img.setAttribute('width','1');
-    img.setAttribute('style','display:none');
-    img.setAttribute('src',`https://www.facebook.com/tr?id=${this.pixelId}&ev=PageView&noscript=1`);
+    img.setAttribute('height', '1');
+    img.setAttribute('width', '1');
+    img.setAttribute('style', 'display:none');
+    img.setAttribute('src', `https://www.facebook.com/tr?id=${this.pixelId}&ev=PageView&noscript=1`);
     var noscript = document.createElement('noscript');
     noscript.append(img);
     this.appendHead(noscript);
   }
 
   public get pixelId() {
-    return this._config.facebookPixel?.pixelId;
+    return this._config.providers.facebookPixel?.pixelId;
   }
 }

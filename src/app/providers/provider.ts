@@ -1,14 +1,14 @@
 import { Injector } from "@angular/core";
 import { NavigationEnd, Router } from "@angular/router";
 
-import { FsAnalyticsConfig } from "../interfaces/analytics-config";
 import { filter, skip } from "rxjs/operators";
+import { FsAnalyticsConfig } from "../interfaces/analytics-config";
 
 
 export abstract class Provider {
 
   public abstract init(): void;
-  public abstract trackEvent(action, value?, catgegory?, label?): void;
+  public abstract trackEvent(type: string, value?, catgegory?, label?): void;
   public abstract trackPage(path): void;
   public abstract setUser(data: {
     name?: string,
@@ -27,9 +27,9 @@ export abstract class Provider {
       skip(1),
       filter(event => event instanceof NavigationEnd)
     )
-    .subscribe((event: NavigationEnd) => {
-      this.trackPage(event.urlAfterRedirects);
-    });
+      .subscribe((event: NavigationEnd) => {
+        this.trackPage(event.urlAfterRedirects);
+      });
   }
 
   public get window() {
@@ -38,10 +38,10 @@ export abstract class Provider {
 
   public addScript(src): Promise<void> {
     return new Promise((resolve, error) => {
-      var script = document.createElement('script');    
+      var script = document.createElement('script');
       script.src = src;
-      script.setAttribute('async','');
-  
+      script.setAttribute('async', '');
+
       script.onload = () => {
         resolve();
       };
@@ -49,7 +49,7 @@ export abstract class Provider {
       script.onerror = () => {
         error();
       };
-  
+
       this.appendHead(script);
     });
   }
