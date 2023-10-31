@@ -43,12 +43,15 @@ export class GoogleTagsProvider extends Provider {
           value: purchaseEvent.total,
           tax: purchaseEvent.tax,
           shipping: purchaseEvent.shipping,
+          currency: purchaseEvent.currency,
           items: purchaseEvent.products
             .map((product) => ({
               item_id: product.id,
               item_name: product.name,
               price: product.price,
               quantity: product.quantity,
+              item_category: product.category,
+              item_category2: product.category2,
             })),
         }
       }

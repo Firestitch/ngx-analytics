@@ -1,15 +1,17 @@
 export interface PurchaseEvent {
-  transactionId?: number,
+  transactionId?: string,
   total?: number,
   shipping?: number,
   tax?: number,
-  currency?: number,
+  currency?: string,
   products?: PurchaseEventProduct[]
 }
 
 export interface PurchaseEventProduct {
-  id?: number,
+  id?: string,
   name?: string,
   price?: number,
   quantity?: number,
+  category?: string,
+  category2?: string,
 }
