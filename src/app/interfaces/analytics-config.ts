@@ -5,8 +5,9 @@ export interface FsAnalyticsConfig {
     googleAnalytics?: {
       measurementId: string,
     },
-    googleTags?: {
+    googleTagManager?: {
       containerId: string,
+      scriptDomain?: string,
     },
     facebookPixel?: {
       pixelId: string,

@@ -20,12 +20,12 @@ export class KitchenSinkComponent {
 
   public purchase() {
     this._analytics.purchase({
-      transactionId: 3498763429,
+      transactionId: '3498763429',
       total: 35.65,
       shipping: 10.52,
       products: [
         {
-          id: 23324,
+          id: '23324',
           name: 'T-Shirt',
           price: 35.00,
           quantity: 1,

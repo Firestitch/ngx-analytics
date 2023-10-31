@@ -8,8 +8,9 @@ export function appAnalyticsConfig(analyticsProcessorService: AnalyticsProcessor
       googleAnalytics: {
         measurementId: 'G-BW04NF6H7W',
       },
-      googleTags: {
+      googleTagManager: {
         containerId: 'GTM-PW823QMF',
+        scriptDomain: 'gtm.cure.dev.firestitch.com',
       },
       // klaviyo: {
       //   publicApiKey: '',

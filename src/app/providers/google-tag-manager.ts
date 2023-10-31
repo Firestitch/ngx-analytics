@@ -4,11 +4,12 @@ import { EventType } from "../enums";
 import { PurchaseEvent } from "../interfaces";
 
 
-export class GoogleTagsProvider extends Provider {
+export class GoogleTagManagerProvider extends Provider {
 
   public init() {
     if (this.containerId) {
-      this.addScript(`https://www.googletagmanager.com/gtm.js?id=${this.containerId}`);
+      const scriptDomain = this.scriptDomain || 'www.googletagmanager.com';
+      this.addScript(`https://${scriptDomain}/gtm.js?id=${this.containerId}`);
       this.window.dataLayer = this.window.dataLayer || [];
 
       this.pushData('js', new Date());
@@ -66,6 +67,10 @@ export class GoogleTagsProvider extends Provider {
   public setUser(data) { }
 
   public get containerId() {
-    return this._config.providers.googleTags?.containerId;
+    return this._config.providers.googleTagManager?.containerId;
+  }
+
+  public get scriptDomain() {
+    return this._config.providers.googleTagManager?.scriptDomain;
   }
 }

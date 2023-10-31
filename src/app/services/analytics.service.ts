@@ -5,7 +5,7 @@ import { take } from 'rxjs/operators';
 import { EventType } from '../enums';
 import { FS_ANALYTICS_CONFIG } from '../injectors';
 import { AnalyticsProcessor, FsAnalyticsConfig, PurchaseEvent } from '../interfaces';
-import { FacebookPixelProvider, GoogleAnalyticsProvider, GoogleTagsProvider, KlaviyoProvider } from '../providers';
+import { FacebookPixelProvider, GoogleAnalyticsProvider, GoogleTagManagerProvider, KlaviyoProvider } from '../providers';
 import { Provider } from '../providers/provider';
 import { AnalyticsProcessorService } from './analytics-processor.service';
 
@@ -31,8 +31,8 @@ export class FsAnalytics {
       this._providers.push(new GoogleAnalyticsProvider(this._injector, this._config, this._router));
     }
 
-    if (this._config.providers.googleTags) {
-      this._providers.push(new GoogleTagsProvider(this._injector, this._config, this._router));
+    if (this._config.providers.googleTagManager) {
+      this._providers.push(new GoogleTagManagerProvider(this._injector, this._config, this._router));
     }
 
     if (this._config.providers.facebookPixel) {
