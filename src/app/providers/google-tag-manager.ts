@@ -31,10 +31,11 @@ export class GoogleTagManagerProvider extends Provider {
 
   public trackEvent(type: any, value?, options?): void {
     const data = this._mapEventData(type, value, options);
+    const event = this._mapTypeEvent(type);
 
     this.window.dataLayer.push({ ecommerce: null });
     this.window.dataLayer.push({
-      event: type,
+      event,
       ...data
     });
   }
@@ -113,6 +114,22 @@ export class GoogleTagManagerProvider extends Provider {
         item_category: item.category,
         item_category2: item.category2,
       }));
+  }
+
+  private _mapTypeEvent(type: EventType) {
+    if (type === EventType.Purcahse) {
+      return 'purchase';
+    } else if (type === EventType.BeginCheckout) {
+      return 'begin_checkout';
+    } else if (type === EventType.AddPayment) {
+      return 'add_payment_info';
+    } else if (type === EventType.AddToCart) {
+      return 'add_to_cart';
+    } else if (type === EventType.RemoveFromCart) {
+      return 'remove_from_cart';
+    }
+
+    return type;
   }
 
   private _mapEventData(type: EventType, value, options) {
