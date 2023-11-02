@@ -36,7 +36,7 @@ export class GoogleAnalyticsProvider extends Provider {
         tax: prucahseEvent.tax,
         shipping: prucahseEvent.shipping,
         currency: prucahseEvent.currency,
-        items: prucahseEvent.products
+        items: prucahseEvent.items
           .map((product) => ({
             item_id: product.id,
             item_name: product.name,

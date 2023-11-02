@@ -25,7 +25,7 @@ export class FacebookPixelProvider extends Provider {
       data = {
         currency: prucahseEvent.currency,
         value: prucahseEvent.total,
-        contents: prucahseEvent.products
+        contents: prucahseEvent.items
           .map((product) => ({
             id: product.id,
             quantity: product.quantity || 1,

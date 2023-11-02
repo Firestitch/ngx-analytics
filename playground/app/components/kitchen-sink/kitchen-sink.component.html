@@ -12,6 +12,30 @@
 
 <a 
     mat-raised-button 
+    (click)="beginCheckout()">
+  Begin Checkout
+</a>
+
+<a 
+    mat-raised-button 
+    (click)="addToCart()">
+  Add To Cart 
+</a>
+
+<a 
+    mat-raised-button 
+    (click)="removeFromCart()">
+  Remove From Cart 
+</a>
+
+<a 
+    mat-raised-button 
+    (click)="addPayment()">
+  Add Payment 
+</a>
+
+<a 
+    mat-raised-button 
     (click)="purchase()">
   Purchase
 </a>

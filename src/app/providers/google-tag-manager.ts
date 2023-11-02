@@ -1,7 +1,7 @@
 import { Provider } from "./provider";
 
 import { EventType } from "../enums";
-import { PurchaseEvent } from "../interfaces";
+import { AddToCartEvent, AppPaymentEvent, BeginCheckoutEvent, Item, PurchaseEvent, RemoveFromCartEvent } from "../interfaces";
 
 
 export class GoogleTagManagerProvider extends Provider {
@@ -30,34 +30,9 @@ export class GoogleTagManagerProvider extends Provider {
   }
 
   public trackEvent(type: any, value?, options?): void {
-    let data = {
-      value,
-      category: options?.category,
-      label: options?.label,
-    } as any;
+    const data = this._mapEventData(type, value, options);
 
-    if (type === EventType.Purcahse) {
-      const purchaseEvent: PurchaseEvent = value;
-      data = {
-        ecommerce: {
-          transaction_id: purchaseEvent.transactionId,
-          value: purchaseEvent.total,
-          tax: purchaseEvent.tax,
-          shipping: purchaseEvent.shipping,
-          currency: purchaseEvent.currency,
-          items: purchaseEvent.products
-            .map((product) => ({
-              item_id: product.id,
-              item_name: product.name,
-              price: product.price,
-              quantity: product.quantity,
-              item_category: product.category,
-              item_category2: product.category2,
-            })),
-        }
-      }
-    }
-
+    this.window.dataLayer.push({ ecommerce: null });
     this.window.dataLayer.push({
       event: type,
       ...data
@@ -72,5 +47,91 @@ export class GoogleTagManagerProvider extends Provider {
 
   public get scriptDomain() {
     return this._config.providers.googleTagManager?.scriptDomain;
+  }
+
+  private _mapPurchaseEventData(value: PurchaseEvent) {
+    return {
+      ecommerce: {
+        transaction_id: value.transactionId,
+        value: value.total,
+        tax: value.tax,
+        shipping: value.shipping,
+        currency: value.currency,
+        items: this._mapItems(value.items),
+      }
+    }
+  }
+
+  private _mapBeginCheckoutEventData(value: BeginCheckoutEvent) {
+    return {
+      ecommerce: {
+        value: value.total,
+        currency: value.currency,
+        items: this._mapItems(value.items),
+      }
+    }
+  }
+
+  private _mapAddToCartEventData(value: AddToCartEvent) {
+    return {
+      ecommerce: {
+        value: value.total,
+        currency: value.currency,
+        items: this._mapItems(value.items),
+      }
+    }
+  }
+
+  private _mapRemoveFromCartEventData(value: RemoveFromCartEvent) {
+    return {
+      ecommerce: {
+        value: value.total,
+        currency: value.currency,
+        items: this._mapItems(value.items),
+      }
+    }
+  }
+
+  private _mapAddPaymentEventData(value: AppPaymentEvent) {
+    return {
+      ecommerce: {
+        value: value.total,
+        currency: value.currency,
+        payment_type: value.paymentType,
+        items: this._mapItems(value.items),
+      }
+    }
+  }
+
+  private _mapItems(items: Item[]) {
+    return items
+      .map((item) => ({
+        item_id: item.id,
+        item_name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        item_category: item.category,
+        item_category2: item.category2,
+      }));
+  }
+
+  private _mapEventData(type: EventType, value, options) {
+    if (type === EventType.Purcahse) {
+      return this._mapPurchaseEventData(value);
+    } else if (type === EventType.BeginCheckout) {
+      return this._mapBeginCheckoutEventData(value);
+    } else if (type === EventType.AddPayment) {
+      return this._mapAddPaymentEventData(value);
+    } else if (type === EventType.AddToCart) {
+      return this._mapAddToCartEventData(value);
+    } else if (type === EventType.RemoveFromCart) {
+      return this._mapRemoveFromCartEventData(value);
+    }
+
+    return {
+      value,
+      category: options?.category,
+      label: options?.label,
+    } as any;
   }
 }
