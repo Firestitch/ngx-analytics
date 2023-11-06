@@ -109,8 +109,8 @@ export class GoogleTagManagerProvider extends Provider {
       .map((item) => ({
         item_id: item.id,
         item_name: item.name,
-        price: item.price,
-        quantity: item.quantity,
+        price: item.price || 0,
+        quantity: item.quantity || 1,
         item_category: item.category,
         item_category2: item.category2,
       }));

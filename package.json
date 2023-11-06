@@ -2,7 +2,7 @@
   "name": "@firestitch/analytics",
   "title": "Analytics",
   "description": "@firestitch/analytics",
-  "version": "12.3.8",
+  "version": "12.3.9",
   "repository": {
     "type": "git",
     "url": "https://github.com/Firestitch/ngx-analytics"
