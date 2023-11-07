@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FsAnalytics } from 'src/app/services/analytics.service';
 
 @Component({
@@ -6,13 +6,18 @@ import { FsAnalytics } from 'src/app/services/analytics.service';
   templateUrl: 'kitchen-sink.component.html',
   styleUrls: ['kitchen-sink.component.scss']
 })
-export class KitchenSinkComponent {
+export class KitchenSinkComponent implements OnInit {
 
   public config = {};
 
   constructor(
     private _analytics: FsAnalytics,
-  ) { }
+  ) {
+  }
+
+  ngOnInit(): void {
+    this.beginCheckout();
+  }
 
   public manualEvent() {
     this._analytics.trackEvent('manual_event');
@@ -33,7 +38,7 @@ export class KitchenSinkComponent {
   };
 
   public addPayment() {
-    this._analytics.beginCheckout(this.payment);
+    this._analytics.addPayment(this.payment);
   }
 
   public beginCheckout() {

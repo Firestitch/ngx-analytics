@@ -1,21 +1,43 @@
 import { Provider } from "./provider";
 
+import { BehaviorSubject, from, interval } from "rxjs";
+import { filter, switchMap, take, takeWhile } from "rxjs/operators";
 import { EventType } from "../enums";
 import { AddToCartEvent, AppPaymentEvent, BeginCheckoutEvent, Item, PurchaseEvent, RemoveFromCartEvent } from "../interfaces";
 
 
 export class GoogleTagManagerProvider extends Provider {
 
+  private _initData = [];
+  private _init$ = new BehaviorSubject<boolean>(false);
+
   public init() {
     if (this.containerId) {
       const scriptDomain = this.scriptDomain || 'www.googletagmanager.com';
-      this.addScript(`https://${scriptDomain}/gtm.js?id=${this.containerId}`);
+      from(this.addScript(`https://${scriptDomain}/gtm.js?id=${this.containerId}`))
+        .pipe(
+          switchMap(() => interval(10)),
+          take(50),
+          takeWhile(() => !this._init$.getValue()),
+          filter(() => {
+            return this.window.dataLayer.some((item) => item.event === 'gtm.load');
+          })
+        )
+        .subscribe(() => {
+          this._init$.next(true);
+          this._init$.complete();
+          this._initData.forEach((data) => {
+            this.window.dataLayer.push(data);
+          });
+        });
+
       this.window.dataLayer = this.window.dataLayer || [];
 
       this.pushData('js', new Date());
       this.pushData('config', this.containerId, { path_path: this._router.url });
     }
   }
+
 
   public pushData(...data: any): void {
     this.window.dataLayer.push(data);
@@ -30,14 +52,24 @@ export class GoogleTagManagerProvider extends Provider {
   }
 
   public trackEvent(type: any, value?, options?): void {
-    const data = this._mapEventData(type, value, options);
-    const event = this._mapTypeEvent(type);
+    const mapping = this._getMapping(type);
+    const data = mapping.transform ?
+      mapping.transform(mapping.type, value) : {
+        event: type,
+        value,
+        category: options?.category,
+        label: options?.label,
+      } as any;
 
-    this.window.dataLayer.push({ ecommerce: null });
-    this.window.dataLayer.push({
-      event,
-      ...data
-    });
+    const dataLayer = this._init$.getValue() ?
+      this.window.dataLayer :
+      this._initData;
+
+    if (mapping.ecommerce) {
+      dataLayer.push({ ecommerce: null });
+    }
+
+    dataLayer.push(data);
   }
 
   public setUser(data) { }
@@ -50,8 +82,9 @@ export class GoogleTagManagerProvider extends Provider {
     return this._config.providers.googleTagManager?.scriptDomain;
   }
 
-  private _mapPurchaseEventData(value: PurchaseEvent) {
+  private _mapPurchaseEventData(event: string, value: PurchaseEvent) {
     return {
+      event,
       ecommerce: {
         transaction_id: value.transactionId,
         value: value.total,
@@ -63,8 +96,9 @@ export class GoogleTagManagerProvider extends Provider {
     }
   }
 
-  private _mapBeginCheckoutEventData(value: BeginCheckoutEvent) {
+  private _mapBeginCheckoutEventData(event: string, value: BeginCheckoutEvent) {
     return {
+      event,
       ecommerce: {
         value: value.total,
         currency: value.currency,
@@ -73,8 +107,9 @@ export class GoogleTagManagerProvider extends Provider {
     }
   }
 
-  private _mapAddToCartEventData(value: AddToCartEvent) {
+  private _mapAddToCartEventData(event: string, value: AddToCartEvent) {
     return {
+      event,
       ecommerce: {
         value: value.total,
         currency: value.currency,
@@ -83,8 +118,9 @@ export class GoogleTagManagerProvider extends Provider {
     }
   }
 
-  private _mapRemoveFromCartEventData(value: RemoveFromCartEvent) {
+  private _mapRemoveFromCartEventData(event: string, value: RemoveFromCartEvent) {
     return {
+      event,
       ecommerce: {
         value: value.total,
         currency: value.currency,
@@ -93,8 +129,9 @@ export class GoogleTagManagerProvider extends Provider {
     }
   }
 
-  private _mapAddPaymentEventData(value: AppPaymentEvent) {
+  private _mapAddPaymentEventData(event: string, value: AppPaymentEvent) {
     return {
+      event,
       ecommerce: {
         value: value.total,
         currency: value.currency,
@@ -116,39 +153,25 @@ export class GoogleTagManagerProvider extends Provider {
       }));
   }
 
-  private _mapTypeEvent(type: EventType) {
+  private _getMapping(type: EventType | string): { type: string, transform: (event: string, value: any) => any, ecommerce: boolean } {
+    let transform: (event: string, value: any) => any;
     if (type === EventType.Purcahse) {
-      return 'purchase';
+      type = 'purchase';
+      transform = (event: string, value: any) => this._mapPurchaseEventData(event, value);
     } else if (type === EventType.BeginCheckout) {
-      return 'begin_checkout';
+      type = 'begin_checkout';
+      transform = (event: string, value: any) => this._mapBeginCheckoutEventData(event, value);
     } else if (type === EventType.AddPayment) {
-      return 'add_payment_info';
+      type = 'add_payment_info';
+      transform = (event: string, value: any) => this._mapAddPaymentEventData(event, value);
     } else if (type === EventType.AddToCart) {
-      return 'add_to_cart';
+      type = 'add_to_cart';
+      transform = (event: string, value: any) => this._mapAddToCartEventData(event, value);
     } else if (type === EventType.RemoveFromCart) {
-      return 'remove_from_cart';
+      type = 'remove_from_cart';
+      transform = (event: string, value: any) => this._mapRemoveFromCartEventData(event, value);
     }
 
-    return type;
-  }
-
-  private _mapEventData(type: EventType, value, options) {
-    if (type === EventType.Purcahse) {
-      return this._mapPurchaseEventData(value);
-    } else if (type === EventType.BeginCheckout) {
-      return this._mapBeginCheckoutEventData(value);
-    } else if (type === EventType.AddPayment) {
-      return this._mapAddPaymentEventData(value);
-    } else if (type === EventType.AddToCart) {
-      return this._mapAddToCartEventData(value);
-    } else if (type === EventType.RemoveFromCart) {
-      return this._mapRemoveFromCartEventData(value);
-    }
-
-    return {
-      value,
-      category: options?.category,
-      label: options?.label,
-    } as any;
+    return { type, transform, ecommerce: !!transform };
   }
 }

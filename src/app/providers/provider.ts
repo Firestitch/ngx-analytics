@@ -41,7 +41,6 @@ export abstract class Provider {
       var script = document.createElement('script');
       script.src = src;
       script.setAttribute('async', '');
-
       script.onload = () => {
         resolve();
       };
