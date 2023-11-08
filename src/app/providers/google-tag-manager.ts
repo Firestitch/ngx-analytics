@@ -16,8 +16,8 @@ export class GoogleTagManagerProvider extends Provider {
       const scriptDomain = this.scriptDomain || 'www.googletagmanager.com';
       from(this.addScript(`https://${scriptDomain}/gtm.js?id=${this.containerId}`))
         .pipe(
-          switchMap(() => interval(10)),
-          take(50),
+          switchMap(() => interval(100)),
+          take(1000),
           takeWhile(() => !this._init$.getValue()),
           filter(() => {
             return this.window.dataLayer.some((item) => item.event === 'gtm.load');
