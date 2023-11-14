@@ -40,7 +40,8 @@ export abstract class Provider {
     return new Promise((resolve, error) => {
       var script = document.createElement('script');
       script.src = src;
-      script.setAttribute('async', '');
+      script.async = true;
+      script.setAttribute('async', 'true');
       script.onload = () => {
         resolve();
       };

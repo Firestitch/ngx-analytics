@@ -32,6 +32,10 @@ export class GoogleTagManagerProvider extends Provider {
         });
 
       this.window.dataLayer = this.window.dataLayer || [];
+      this.window.dataLayer.push({
+        event: 'gtm.js',
+        'gtm.start': new Date().getTime(),
+      });
 
       this.pushData('js', new Date());
       this.pushData('config', this.containerId, { path_path: this._router.url });
