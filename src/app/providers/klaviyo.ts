@@ -1,15 +1,19 @@
-import { PurchaseEvent } from "../interfaces";
+import { PurchaseEvent } from '../interfaces';
 import { Provider } from "./provider";
 
 
 export class KlaviyoProvider extends Provider {
 
   public init() {
-    (window as any)._learnq = (window as any)._learnq || [];
+    (window as any).klaviyo = (window as any).klaviyo || [];
 
     if (this.publicApiKey) {
       this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`);
     }
+  }
+
+  public get klaviyo(): any {
+    return (window as any).klaviyo;
   }
 
   public trackPage(path: string): void {
@@ -21,7 +25,11 @@ export class KlaviyoProvider extends Provider {
   }
 
   public trackEvent(action: any, value?: any): void {
-    (window as any)._learnq.push(['track', action, value]);
+    if(this.klaviyo.track) {
+      this.klaviyo.track(action, value);
+    } else {
+      this.klaviyo.push(['track', action, value]);
+    }
   }
 
   public setUser(data) {
@@ -47,7 +55,9 @@ export class KlaviyoProvider extends Provider {
         return accum;
       }, {});
 
-    (window as any)._learnq.push(['identify', data]);
+      if(this.klaviyo.identify) {
+        this.klaviyo.identify(data);
+      }
   }
 
   public get publicApiKey() {
