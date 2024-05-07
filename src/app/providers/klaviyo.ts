@@ -1,14 +1,27 @@
-import { PurchaseEvent } from '../interfaces';
+import { PurchaseEvent } from "../interfaces";
 import { Provider } from "./provider";
 
 
 export class KlaviyoProvider extends Provider {
+  
+  private _preloadData = [];
 
   public init() {
-    (window as any).klaviyo = (window as any).klaviyo || [];
-
     if (this.publicApiKey) {
-      this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`);
+      this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`)
+        .then(() => {
+          for(let i=0; i < 10; i++) {            
+            setTimeout(() => {
+              if(this.klaviyo.push) {
+                this._preloadData
+                  .forEach((data) => {
+                    this.klaviyo.push(data);
+                  });
+                this._preloadData = [];
+              }
+            }, i * 1000);
+          }
+        });
     }
   }
 
@@ -25,10 +38,10 @@ export class KlaviyoProvider extends Provider {
   }
 
   public trackEvent(action: any, value?: any): void {
-    if(this.klaviyo.track) {
+    if(this.klaviyo?.track) {
       this.klaviyo.track(action, value);
     } else {
-      this.klaviyo.push(['track', action, value]);
+      this._preloadData.push(['track', action, value]);
     }
   }
 
@@ -55,10 +68,10 @@ export class KlaviyoProvider extends Provider {
         return accum;
       }, {});
 
-      if(this.klaviyo.identify) {
+      if(this.klaviyo?.identify) {
         this.klaviyo.identify(data);
       } else {
-        this.klaviyo.push(['identify', data]);
+        this._preloadData.push(['identify', data]);
       }
   }
 

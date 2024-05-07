@@ -12,9 +12,9 @@ export function appAnalyticsConfig(analyticsProcessorService: AnalyticsProcessor
         containerId: 'GTM-PW823QMF',
         scriptDomain: 'gtm.cure.dev.firestitch.com',
       },
-      // klaviyo: {
-      //   publicApiKey: '',
-      // }
+      klaviyo: {
+        publicApiKey: 'SjntuF',
+      }
     },
     processor: analyticsProcessorService
   };
