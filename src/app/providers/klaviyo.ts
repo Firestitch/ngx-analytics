@@ -10,9 +10,9 @@ export class KlaviyoProvider extends Provider {
     if (this.publicApiKey) {
       this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`)
         .then(() => {
-          for(let i=0; i < 10; i++) {            
+          for(let i=1; i <= 10; i++) {            
             setTimeout(() => {
-              if(this.klaviyo.push) {
+              if(this.klaviyo?.push) {
                 this._preloadData
                   .forEach((data) => {
                     this.klaviyo.push(data);
