@@ -57,6 +57,8 @@ export class KlaviyoProvider extends Provider {
 
       if(this.klaviyo.identify) {
         this.klaviyo.identify(data);
+      } else {
+        this.klaviyo.push(['identify', data]);
       }
   }
 
