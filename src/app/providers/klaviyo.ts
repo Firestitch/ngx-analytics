@@ -37,15 +37,15 @@ export class KlaviyoProvider extends Provider {
       .reduce((accum, name) => {
         switch (name) {
           case 'email':
-            accum['$email'] = data[name];
+            accum['email'] = data[name];
             break;
 
           case 'firstName':
-            accum['$first_name'] = data[name];
+            accum['first_name'] = data[name];
             break;
 
           case 'lastName':
-            accum['$last_name'] = data[name];
+            accum['last_name'] = data[name];
             break;
 
           default:
