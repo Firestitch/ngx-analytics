@@ -1,10 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { FsAnalytics } from 'src/app/services/analytics.service';
+import { MatAnchor } from '@angular/material/button';
+import { FsAnalyticsDirective } from '../../../../src/app/directives/analytics/analytics.directive';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-kitchen-sink',
-  templateUrl: 'kitchen-sink.component.html',
-  styleUrls: ['kitchen-sink.component.scss']
+    selector: 'app-kitchen-sink',
+    templateUrl: 'kitchen-sink.component.html',
+    styleUrls: ['kitchen-sink.component.scss'],
+    standalone: true,
+    imports: [MatAnchor, FsAnalyticsDirective, RouterLink]
 })
 export class KitchenSinkComponent implements OnInit {
 

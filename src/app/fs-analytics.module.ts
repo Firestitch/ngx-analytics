@@ -6,12 +6,10 @@ import { FsAnalyticsConfig } from './interfaces';
 
 
 @NgModule({
-  declarations: [
-    FsAnalyticsDirective,
-  ],
-  exports: [
-    FsAnalyticsDirective,
-  ]
+    imports: [FsAnalyticsDirective],
+    exports: [
+        FsAnalyticsDirective,
+    ]
 })
 export class FsAnalyticsModule {
   static forRoot(config: FsAnalyticsConfig = {}): ModuleWithProviders<FsAnalyticsModule> {

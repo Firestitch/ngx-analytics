@@ -7,7 +7,8 @@ import { FsAnalytics } from '../../services/analytics.service';
 
 
 @Directive({
-  selector: '[fsAnalytics]'
+    selector: '[fsAnalytics]',
+    standalone: true
 })
 export class FsAnalyticsDirective implements OnInit, OnDestroy {
 
