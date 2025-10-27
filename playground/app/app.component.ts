@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FsAnalytics } from '@firestitch/analytics';
 import { RouterOutlet } from '@angular/router';
 
@@ -10,10 +10,12 @@ import { RouterOutlet } from '@angular/router';
     imports: [RouterOutlet]
 })
 export class AppComponent {
+  private _analytics = inject(FsAnalytics);
 
-  public constructor(
-    private _analytics: FsAnalytics,
-  ) {
+
+  public constructor() {
+    const _analytics = this._analytics;
+
     _analytics.init();
   }
 }

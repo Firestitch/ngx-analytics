@@ -1,4 +1,4 @@
-import { Inject, Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { take } from 'rxjs/operators';
@@ -14,15 +14,13 @@ import { AnalyticsProcessorService } from './analytics-processor.service';
   providedIn: 'root',
 })
 export class FsAnalytics {
+  private _config = inject<FsAnalyticsConfig>(FS_ANALYTICS_CONFIG);
+  private _injector = inject(Injector);
+  private _router = inject(Router);
+
 
   private _providers: Provider[] = [];
   private _processorService: AnalyticsProcessor;
-
-  public constructor(
-    @Inject(FS_ANALYTICS_CONFIG) private _config: FsAnalyticsConfig,
-    private _injector: Injector,
-    private _router: Router,
-  ) { }
 
   public init() {
     this._processorService = this._config.processor || new AnalyticsProcessorService();

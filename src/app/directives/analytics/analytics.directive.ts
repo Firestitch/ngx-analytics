@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnDestroy, OnInit, inject } from '@angular/core';
 
 import { fromEvent, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -11,16 +11,14 @@ import { FsAnalytics } from '../../services/analytics.service';
     standalone: true
 })
 export class FsAnalyticsDirective implements OnInit, OnDestroy {
+  private _analytics = inject(FsAnalytics);
+  private _el = inject(ElementRef);
+
 
   @Input('fsAnalytics') public action = '';
   @Input() public event = 'click';
 
   private _destroy$ = new Subject();
-
-  public constructor(
-    private _analytics: FsAnalytics,
-    private _el: ElementRef,
-  ) {}
 
   public ngOnInit(): void {
     fromEvent(this._el.nativeElement, this.event)

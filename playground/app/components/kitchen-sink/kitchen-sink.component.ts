@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FsAnalytics } from 'src/app/services/analytics.service';
 import { MatAnchor } from '@angular/material/button';
 import { FsAnalyticsDirective } from '../../../../src/app/directives/analytics/analytics.directive';
@@ -12,13 +12,10 @@ import { RouterLink } from '@angular/router';
     imports: [MatAnchor, FsAnalyticsDirective, RouterLink]
 })
 export class KitchenSinkComponent implements OnInit {
+  private _analytics = inject(FsAnalytics);
+
 
   public config = {};
-
-  constructor(
-    private _analytics: FsAnalytics,
-  ) {
-  }
 
   ngOnInit(): void {
     this.beginCheckout();
