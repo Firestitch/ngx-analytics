@@ -17,7 +17,7 @@ export class GoogleAnalyticsProvider extends Provider {
       }
 
       gtag('js', new Date());
-      gtag('config', this.measurementId, { path_path: this._router.url });
+      gtag('config', this.measurementId, { page_path: this._router.url });
     }
   }
 
@@ -61,7 +61,15 @@ export class GoogleAnalyticsProvider extends Provider {
   }
 
   public setUser(data) {
+    if (!this.measurementId) {
+      return;
+    }
 
+    this.gtag('set', 'user_properties', data);
+
+    if (data?.id) {
+      this.gtag('config', this.measurementId, { user_id: data.id });
+    }
   }
 
   public get measurementId() {
