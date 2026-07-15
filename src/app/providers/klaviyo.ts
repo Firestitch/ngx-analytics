@@ -1,17 +1,23 @@
-import { PurchaseEvent } from "../interfaces";
-import { Provider } from "./provider";
+import { KlaviyoProviderConfig, PurchaseEvent } from '../interfaces';
+
+import { Provider } from './provider';
 
 
 export class KlaviyoProvider extends Provider {
-  
+
+  public readonly name = 'klaviyo';
+
   private _preloadData = [];
+  // Handles for the flush timers scheduled in init(), so destroy() can cancel any
+  // that haven't fired yet (otherwise they keep pushing after teardown).
+  private _flushTimers: any[] = [];
 
   public init() {
     if (this.publicApiKey) {
       this.addScript(`https://static.klaviyo.com/onsite/js/klaviyo.js?company_id=${this.publicApiKey}`)
         .then(() => {
-          for(let i=1; i <= 10; i++) {            
-            setTimeout(() => {
+          for(let i = 1; i <= 10; i++) {
+            this._flushTimers.push(setTimeout(() => {
               if(this.klaviyo?.push) {
                 this._preloadData
                   .forEach((data) => {
@@ -19,10 +25,21 @@ export class KlaviyoProvider extends Provider {
                   });
                 this._preloadData = [];
               }
-            }, i * 1000);
+            }, i * 1000));
           }
         });
     }
+  }
+
+  public destroy(): void {
+    // Removes the router subscription and the injected klaviyo.js <script> node.
+    super.destroy();
+
+    // Cancel any flush timers that haven't fired yet so they don't push buffered
+    // events after teardown.
+    this._flushTimers.forEach((timer) => clearTimeout(timer));
+    this._flushTimers = [];
+    this._preloadData = [];
   }
 
   public get klaviyo(): any {
@@ -68,14 +85,14 @@ export class KlaviyoProvider extends Provider {
         return accum;
       }, {});
 
-      if(this.klaviyo?.identify) {
-        this.klaviyo.identify(data);
-      } else {
-        this._preloadData.push(['identify', data]);
-      }
+    if(this.klaviyo?.identify) {
+      this.klaviyo.identify(data);
+    } else {
+      this._preloadData.push(['identify', data]);
+    }
   }
 
   public get publicApiKey() {
-    return this._config.providers.klaviyo?.publicApiKey;
+    return (this._providerConfig as KlaviyoProviderConfig)?.publicApiKey;
   }
 }

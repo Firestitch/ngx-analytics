@@ -1,5 +1,5 @@
 import { EventType } from "../enums";
-import { PurchaseEvent } from "../interfaces";
+import { FacebookPixelProviderConfig, PurchaseEvent } from "../interfaces";
 import { Provider } from "./provider";
 
 
@@ -8,9 +8,33 @@ declare let fbq: Function;
 
 export class FacebookPixelProvider extends Provider {
 
+  public readonly name = 'facebookPixel';
+
   public init() {
     this.addScript();
     this.addImg();
+  }
+
+  public destroy(): void {
+    // Removes the router subscription, the injected fbevents.js <script>, and the
+    // <noscript> tracking pixel — all appended via appendHead().
+    super.destroy();
+
+    const f = window as any;
+
+    // Facebook's documented opt-out: revoke consent so fbq stops sending events,
+    // including any the pixel would fire on its own.
+    if (typeof f.fbq === 'function') {
+      try {
+        f.fbq('consent', 'revoke');
+      } catch {
+        /* fbq present but not fully initialized; nothing more to revoke */
+      }
+    }
+
+    // Drop the globals the pixel installed so a re-init starts clean.
+    delete f.fbq;
+    delete f._fbq;
   }
 
   public trackEvent(type: string | EventType, value?, options?): void {
@@ -82,6 +106,6 @@ export class FacebookPixelProvider extends Provider {
   }
 
   public get pixelId() {
-    return this._config.providers.facebookPixel?.pixelId;
+    return (this._providerConfig as FacebookPixelProviderConfig)?.pixelId;
   }
 }

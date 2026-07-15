@@ -3,10 +3,12 @@ import { Provider } from "./provider";
 import { BehaviorSubject, from, interval } from "rxjs";
 import { filter, switchMap, take, takeWhile } from "rxjs/operators";
 import { EventType } from "../enums";
-import { AddToCartEvent, AppPaymentEvent, BeginCheckoutEvent, Item, PurchaseEvent, RemoveFromCartEvent } from "../interfaces";
+import { AddToCartEvent, AppPaymentEvent, BeginCheckoutEvent, GoogleTagManagerProviderConfig, Item, PurchaseEvent, RemoveFromCartEvent } from "../interfaces";
 
 
 export class GoogleTagManagerProvider extends Provider {
+
+  public readonly name = 'googleTagManager';
 
   private _initData = [];
   private _init$ = new BehaviorSubject<boolean>(false);
@@ -42,6 +44,27 @@ export class GoogleTagManagerProvider extends Provider {
     }
   }
 
+
+  public destroy(): void {
+    // Removes the router subscription and the injected gtm.js <script> node.
+    super.destroy();
+
+    // Stop the init poll (interval + takeWhile) if it's still running, so it can't
+    // fire after teardown.
+    if (!this._init$.closed) {
+      this._init$.next(true);
+      this._init$.complete();
+    }
+
+    // GTM has no per-container opt-out flag (unlike GA's ga-disable-*). Removing
+    // the script stops new tag loads; clearing the queue prevents already-buffered
+    // pushes from being processed. Tags GTM's own script already registered can't
+    // be unbound from here — a full reload is the only guaranteed reset.
+    this._initData = [];
+    if (this.window.dataLayer) {
+      this.window.dataLayer.length = 0;
+    }
+  }
 
   public pushData(...data: any): void {
     this.window.dataLayer.push(data);
@@ -79,11 +102,11 @@ export class GoogleTagManagerProvider extends Provider {
   public setUser(data) { }
 
   public get containerId() {
-    return this._config.providers.googleTagManager?.containerId;
+    return (this._providerConfig as GoogleTagManagerProviderConfig)?.containerId;
   }
 
   public get scriptDomain() {
-    return this._config.providers.googleTagManager?.scriptDomain;
+    return (this._providerConfig as GoogleTagManagerProviderConfig)?.scriptDomain;
   }
 
   private _mapPurchaseEventData(event: string, value: PurchaseEvent) {

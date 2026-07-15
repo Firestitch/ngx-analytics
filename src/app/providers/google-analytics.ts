@@ -1,11 +1,13 @@
 import { EventType } from "../enums";
-import { PurchaseEvent } from "../interfaces";
+import { GoogleAnalyticsProviderConfig, PurchaseEvent } from "../interfaces";
 import { Provider } from "./provider";
 
 declare let gtag: Function;
 
 
 export class GoogleAnalyticsProvider extends Provider {
+
+  public readonly name = 'googleAnalytics';
 
   public init() {
     if (this.measurementId) {
@@ -18,6 +20,19 @@ export class GoogleAnalyticsProvider extends Provider {
 
       gtag('js', new Date());
       gtag('config', this.measurementId, { page_path: this._router.url });
+    }
+  }
+
+  public destroy(): void {
+    // Removes the router subscription and the injected gtag <script> node.
+    super.destroy();
+
+    if (this.measurementId) {
+      // GA4's documented opt-out: once this flag is set, gtag.js suppresses all
+      // hits for this measurement id — including its own auto/enhanced-measurement
+      // tracking that runs independently of this library. Survives on window so it
+      // stays in effect even though the provider instance is gone.
+      this.window[`ga-disable-${this.measurementId}`] = true;
     }
   }
 
@@ -73,6 +88,6 @@ export class GoogleAnalyticsProvider extends Provider {
   }
 
   public get measurementId() {
-    return this._config.providers.googleAnalytics?.measurementId;
+    return (this._providerConfig as GoogleAnalyticsProviderConfig)?.measurementId;
   }
 }

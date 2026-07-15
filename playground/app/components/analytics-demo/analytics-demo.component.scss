@@ -1,0 +1,150 @@
+:host {
+  display: block;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1c2534;
+}
+
+.ad-head {
+  margin-bottom: 18px;
+  h2 { margin: 0 0 6px; font-size: 22px; }
+  p { margin: 0; max-width: 80ch; color: #556; line-height: 1.5; font-size: 14px; }
+}
+
+/* ---- Provider panel ---- */
+.ad-panel {
+  border: 1px solid #dce2ec;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.ad-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 8px 8px 16px;
+  background: #f2f5f9;
+  border-bottom: 1px solid #dce2ec;
+  font-weight: 700;
+  font-size: 13px;
+}
+.ad-panel-note {
+  margin: 0;
+  padding: 10px 16px;
+  background: #fbfcfe;
+  border-bottom: 1px solid #eef2f7;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #566;
+  code { background: #eceff4; padding: 1px 5px; border-radius: 4px; font-size: 11.5px; }
+}
+.ad-providers { display: flex; flex-direction: column; }
+.ad-provider {
+  display: grid;
+  grid-template-columns: 16px 160px 90px 90px 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #eef2f7;
+  font-size: 14px;
+
+  &:last-child { border-bottom: 0; }
+
+  .ad-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #cbd3df;
+  }
+  &.active .ad-dot { background: #1e874b; box-shadow: 0 0 0 3px #1e874b22; }
+
+  .ad-pname { font-weight: 600; font-family: 'Cascadia Code', 'Consolas', monospace; }
+  .ad-ptype { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #8a97ab; }
+  .ad-pstate { font-size: 12px; font-weight: 600; }
+  &.active .ad-pstate { color: #1e874b; }
+  &:not(.active) .ad-pstate { color: #b04a4a; }
+
+  .ad-pactions { justify-self: end; }
+}
+
+/* ---- 50 / 50 split ---- */
+.ad-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+
+  @media (max-width: 900px) { grid-template-columns: 1fr; gap: 24px; }
+}
+
+.ad-controls section { margin-bottom: 24px; }
+.ad-controls h3 { margin: 0 0 10px; font-size: 15px; }
+.ad-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ad-note {
+  background: #f7f9fc;
+  border: 1px solid #e3e9f2;
+  border-radius: 10px;
+  padding: 14px 18px;
+  ol { margin: 0; padding-left: 18px; }
+  li { font-size: 13px; color: #445; line-height: 1.6; margin-bottom: 6px; }
+  code { background: #eceff4; padding: 1px 5px; border-radius: 4px; font-size: 12px; }
+}
+
+/* ---- Live log ---- */
+.ad-logwrap {
+  border: 1px solid #dce2ec;
+  border-radius: 10px;
+  overflow: hidden;
+  position: sticky;
+  top: 12px;
+}
+.ad-logbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 14px;
+  background: #f2f5f9;
+  border-bottom: 1px solid #dce2ec;
+  font-weight: 600;
+  font-size: 13px;
+}
+.ad-log {
+  max-height: 520px;
+  overflow-y: auto;
+  background: #0e1420;
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+}
+.ad-empty { padding: 24px; color: #7a879e; text-align: center; }
+
+.ad-row {
+  display: grid;
+  grid-template-columns: 92px 46px 96px auto;
+  grid-template-areas:
+    'time badge prov action'
+    'time badge prov detail';
+  gap: 0 10px;
+  padding: 6px 12px;
+  border-bottom: 1px solid #1c2534;
+  color: #d7deea;
+
+  .ad-time { grid-area: time; color: #6e7c93; }
+  .ad-badge {
+    grid-area: badge;
+    align-self: start;
+    font-weight: 700;
+    font-size: 10px;
+    text-align: center;
+    padding: 1px 0;
+    border-radius: 4px;
+  }
+  .ad-prov { grid-area: prov; align-self: start; color: #9fb0cc; font-weight: 600; }
+  .ad-action { grid-area: action; font-weight: 600; }
+  .ad-detail { grid-area: detail; color: #7d8ca8; word-break: break-word; }
+
+  /* app call = blue, provider receipt = green, init = teal, destroy = red */
+  &[data-kind='app'] .ad-badge { background: #12335a; color: #6db3ff; }
+  &[data-kind='received'] .ad-badge { background: #123922; color: #58c98a; }
+  &[data-kind='received'] .ad-prov { color: #7ee0a6; }
+  &[data-kind='init'] .ad-badge { background: #0f3b3b; color: #4fd6c9; }
+  &[data-kind='destroy'] .ad-badge { background: #3a1b1c; color: #f0666a; }
+  &[data-kind='destroy'] .ad-prov { color: #f0888c; }
+}

@@ -1,3 +1,2 @@
+export * from './analytics-demo';
 export * from './examples';
-export * from './kitchen-sink';
-

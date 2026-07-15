@@ -1,0 +1,100 @@
+<div class="ad">
+
+  <header class="ad-head">
+    <h2>Firestitch Analytics — live demo</h2>
+    <p>
+      Fire an event on the left; watch the log on the right show the app call and
+      which <strong>providers</strong> received it. Use the panel to init/destroy
+      providers individually and see the log change.
+    </p>
+  </header>
+
+  <!-- Provider control panel -->
+  <section class="ad-panel">
+    <div class="ad-panel-head">
+      <span>Providers</span>
+      <button mat-button (click)="destroyAll()">Destroy all</button>
+    </div>
+    <p class="ad-panel-note">
+      <strong>Built-in</strong> providers (googleTagManager, klaviyo) ship with the library and send to those
+      real services. <strong>Custom</strong> (<code>custom-demo</code>) is the escape hatch — a third-party
+      tracker plugged in through config only. It loads <code>assets/mock-tracker.js</code> and forwards events
+      to the <code>window.mockTracker</code> global it installs. This is the pattern a real marketing pixel
+      (or Cloudcure's own tracker) uses.
+    </p>
+    <div class="ad-providers">
+      <div class="ad-provider"
+           *ngFor="let p of providers"
+           [class.active]="p.active">
+        <span class="ad-dot"></span>
+        <span class="ad-pname">{{ p.name }}</span>
+        <span class="ad-ptype">{{ p.kind }}</span>
+        <span class="ad-pstate">
+          {{ p.active ? 'active' : 'destroyed' }}
+        </span>
+        <span class="ad-pactions">
+          <button mat-stroked-button
+                  *ngIf="!p.active && p.config"
+                  (click)="initProvider(p)">Init</button>
+          <button mat-stroked-button
+                  *ngIf="p.active"
+                  (click)="destroyProvider(p)">Destroy</button>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 50/50 split: controls | live log -->
+  <div class="ad-split">
+
+    <div class="ad-controls">
+      <section>
+        <h3>Cart &amp; checkout</h3>
+        <div class="ad-btns">
+          <button mat-stroked-button (click)="addToCart()">Add to cart</button>
+          <button mat-stroked-button (click)="removeFromCart()">Remove from cart</button>
+          <button mat-stroked-button (click)="beginCheckout()">Begin checkout</button>
+          <button mat-stroked-button (click)="addPayment()">Add payment</button>
+          <button mat-flat-button color="primary" (click)="purchase()">Purchase</button>
+        </div>
+      </section>
+
+      <section>
+        <h3>Custom event &amp; identity</h3>
+        <div class="ad-btns">
+          <button mat-stroked-button (click)="customEvent()">Custom event</button>
+          <button mat-stroked-button (click)="identify()">Identify (setUser)</button>
+        </div>
+      </section>
+
+      <section class="ad-note">
+        <h3>Try this</h3>
+        <ol>
+          <li>Click <strong>Purchase</strong> — the log shows one blue <em>APP</em> row (the call you made),
+            then one green <em>RECV</em> row for <strong>each active provider</strong> that received it.</li>
+          <li><strong>Destroy</strong> the <code>custom-demo</code> provider in the panel, click Purchase again —
+            no <code>custom-demo</code> row now, but the built-ins still log.</li>
+          <li><strong>Init</strong> it back — it reloads its script and its rows return.</li>
+        </ol>
+      </section>
+    </div>
+
+    <div class="ad-logwrap">
+      <div class="ad-logbar">
+        <span>Live activity — FsAnalytics.activity$</span>
+        <button mat-button (click)="clearLog()">Clear</button>
+      </div>
+      <div class="ad-log">
+        <div class="ad-empty" *ngIf="log.length === 0">No activity yet — fire an event.</div>
+        <div class="ad-row" *ngFor="let row of log" [attr.data-kind]="row.kind">
+          <span class="ad-time">{{ row.time }}</span>
+          <span class="ad-badge">{{ row.kind === 'app' ? 'APP' : (row.kind === 'received' ? 'RECV' : row.kind === 'init' ? 'INIT' : 'GONE') }}</span>
+          <span class="ad-prov">{{ row.provider || '—' }}</span>
+          <span class="ad-action">{{ row.action }}</span>
+          <span class="ad-detail">{{ row.detail }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

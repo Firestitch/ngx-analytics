@@ -6,7 +6,7 @@
     "editor.formatOnSave": true
   },
   "barrelr.lineEnding": "LF",
-  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.preferences.importModuleSpecifier": "project-relative",
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
@@ -14,5 +14,10 @@
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
-  }
+  },
+  "workbench.editorAssociations": {
+    "**/.specify/*.md": "vscode.markdown.preview.editor",
+    "**/.specify/**/*.md": "vscode.markdown.preview.editor"
+  },
+  "markdown.mermaid.enabled": true
 }
