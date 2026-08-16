@@ -52,7 +52,7 @@ export class FsAnalytics {
     }
     this._initialized = true;
 
-    this._processorService = this._config.processor || new AnalyticsProcessorService();
+    this._initProcessor();
 
     (this._config.providers || []).forEach((providerConfig) => {
       const provider = this._createProvider(providerConfig);
@@ -68,18 +68,30 @@ export class FsAnalytics {
   }
 
 
-  // Register + init a single custom provider at runtime — used to activate a
-  // provider only on certain routes (e.g. a tracker that should run on checkout
-  // pages but not app-wide). No-op if a provider with this name already exists.
-  public addCustomProvider(custom: CustomProviderConfig) {
-    if (this._providers.some((provider) => provider.name === custom.name)) {
+  // Register + init a single provider of ANY type at runtime — used to activate
+  // a provider only on certain routes (e.g. Google Analytics on the checkout
+  // pages but not app-wide) while the providers in the config stay up for the
+  // life of the app. Safe to call before init(): the processor is created on
+  // first use. No-op if a provider with this name already exists — built-in
+  // providers are named by their type ('googleAnalytics', 'klaviyo', ...),
+  // custom ones by their `name`.
+  public addProvider(config: ProviderConfig) {
+    this._initProcessor();
+
+    const provider = this._createProvider(config);
+    if (!provider || this._providers.some((existing) => existing.name === provider.name)) {
       return;
     }
 
-    const provider = new CustomProvider(this._injector, this._config, this._router, custom);
     this._providers.push(provider);
     provider.init();
     this._emit({ provider: provider.name, kind: 'init', action: 'init' });
+  }
+
+  // Register + init a single custom provider at runtime. Kept for callers that
+  // predate addProvider(); the two are the same operation.
+  public addCustomProvider(custom: CustomProviderConfig) {
+    this.addProvider(custom);
   }
 
   // Tear down and unregister a single provider by name (leaves the others
@@ -189,6 +201,14 @@ export class FsAnalytics {
         return new CustomProvider(this._injector, this._config, this._router, config);
       default:
         return null;
+    }
+  }
+
+  // The processor is shared by every provider and is needed before the first
+  // trackEvent(), whether that provider came from the config or addProvider().
+  private _initProcessor() {
+    if (!this._processorService) {
+      this._processorService = this._config.processor || new AnalyticsProcessorService();
     }
   }
 

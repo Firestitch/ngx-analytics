@@ -11,6 +11,11 @@ export class GoogleAnalyticsProvider extends Provider {
 
   public init() {
     if (this.measurementId) {
+      // Clear the opt-out destroy() sets. It lives on window and outlives the
+      // provider instance, so without this a destroy()/init() cycle — a provider
+      // scoped to certain routes, re-entered — would come back permanently mute.
+      this.window[`ga-disable-${this.measurementId}`] = false;
+
       this.addScript(`https://www.googletagmanager.com/gtag/js?id=${this.measurementId}`);
 
       this.window.dataLayer = this.window.dataLayer || [];
