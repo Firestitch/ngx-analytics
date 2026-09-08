@@ -177,6 +177,21 @@ export class FsAnalytics {
       });
   }
 
+  // Identify the person to every registered provider.
+  //
+  // One object goes to all of them; each takes only the fields it is entitled to.
+  // What that means per provider today:
+  //
+  //   googleAnalytics  - `id` only, sent as GA4's `user_id`. Every other field is
+  //                      dropped: personal details must never reach Google.
+  //   klaviyo          - the whole object, with firstName/lastName mapped to
+  //                      Klaviyo's field names. `email` is its profile merge key.
+  //   googleTagManager - nothing (no-op).
+  //   facebookPixel    - nothing (no-op).
+  //   custom           - the whole object, handed to the config's setUser callback.
+  //
+  // So it is safe to include an email here for Klaviyo's sake — Google will not
+  // see it. Pass an opaque application key as `id`, never an email or a username.
   public setUser(data) {
     this._emit({ provider: null, kind: 'app', action: 'setUser', data });
 

@@ -80,12 +80,23 @@ export class GoogleAnalyticsProvider extends Provider {
     this.window.gtag(name, value, options);
   }
 
+  // Google is told the id and NOTHING else.
+  //
+  // `FsAnalytics.setUser()` hands the SAME object to every registered provider, so
+  // whatever a caller includes for another provider's benefit — an email for
+  // Klaviyo's merge key, a name — arrives here too. This used to write that whole
+  // object into GA4 user properties, which is how patient email addresses and
+  // names reached Google from an app that was only trying to identify a Klaviyo
+  // profile. Ignore every other field: user properties are for attributes, and
+  // Google's terms prohibit sending anything that could identify a person.
+  //
+  // `user_id` is GA4's purpose-built field for exactly this, and an opaque
+  // application key is what belongs in it. If non-identifying user properties are
+  // ever wanted, they must arrive as an explicit, named opt-in — never by default.
   public setUser(data) {
     if (!this.measurementId) {
       return;
     }
-
-    this.gtag('set', 'user_properties', data);
 
     if (data?.id) {
       this.gtag('config', this.measurementId, { user_id: data.id });

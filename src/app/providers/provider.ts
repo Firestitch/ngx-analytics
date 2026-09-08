@@ -47,6 +47,13 @@ export abstract class Provider {
   public abstract init(): void;
   public abstract trackEvent(type: string, value?, catgegory?, label?): void;
   public abstract trackPage(path): void;
+  // Identify the person. Every registered provider is handed the SAME object, so
+  // this carries the union of what all of them need — and each provider takes only
+  // the fields it is allowed to have. Notably GoogleAnalyticsProvider reads `id`
+  // alone and ignores the rest: personal details must never reach GA4.
+  //
+  // `id` should be an opaque application key, not something meaningful to anyone
+  // outside the app's own database.
   public abstract setUser(data: {
     name?: string,
     firstName?: string,

@@ -122,8 +122,17 @@ export class AnalyticsDemoComponent implements OnInit, OnDestroy {
     this._analytics.trackEvent('newsletter_signup', { source: 'footer' });
   }
 
+  // Deliberately includes personal details alongside the id, because that is the
+  // regression worth being able to see: Klaviyo needs the email, and Google must
+  // receive the id and nothing else. Watch the network tab — the gtag request
+  // should carry `uid` and no name or address.
   public identify(): void {
-    this._analytics.setUser({ email: 'jane@example.com', firstName: 'Jane', lastName: 'Doe' });
+    this._analytics.setUser({
+      id: 'acct_10482',
+      email: 'jane@example.com',
+      firstName: 'Jane',
+      lastName: 'Doe',
+    });
   }
 
   public clearLog(): void {
